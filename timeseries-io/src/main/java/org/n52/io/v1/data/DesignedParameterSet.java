@@ -27,7 +27,7 @@ package org.n52.io.v1.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.n52.io.img.RenderingContext;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Represents a parameter object to request data from multiple timeseries.
@@ -50,8 +50,14 @@ public class DesignedParameterSet extends ParameterSet {
     private boolean grid = true;
 
     /**
+     * A 2-character language code to determine the requested locale.
+     */
+    private String language;
+    
+    /**
      * Style options for each timeseriesId of interest.
      */
+    @JsonProperty(required = true)
     private Map<String, StyleProperties> styleOptions;
 
     /**
@@ -101,6 +107,14 @@ public class DesignedParameterSet extends ParameterSet {
         return this.grid;
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
     public void setStyleOptions(Map<String, StyleProperties> renderingOptions) {
         this.styleOptions = renderingOptions;
     }
@@ -111,13 +125,6 @@ public class DesignedParameterSet extends ParameterSet {
 
     public void addTimeseriesWithStyleOptions(String timeseriesId, StyleProperties styleOptions) {
         this.styleOptions.put(timeseriesId, styleOptions);
-    }
-    
-    public static RenderingContext createContextForSingleTimeseries(TimeseriesMetadataOutput metadata, StyleProperties style, String timespan) {
-        DesignedParameterSet parameters = new DesignedParameterSet();
-        parameters.addTimeseriesWithStyleOptions(metadata.getId(), style);
-        parameters.setTimespan(timespan);
-        return RenderingContext.createWith(parameters, metadata);
     }
 
 }

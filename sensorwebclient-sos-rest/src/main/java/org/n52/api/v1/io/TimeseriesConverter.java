@@ -1,11 +1,36 @@
+/**
+ * ﻿Copyright (C) 2012
+ * by 52 North Initiative for Geospatial Open Source Software GmbH
+ *
+ * Contact: Andreas Wytzisk
+ * 52 North Initiative for Geospatial Open Source Software GmbH
+ * Martin-Luther-King-Weg 24
+ * 48155 Muenster, Germany
+ * info@52north.org
+ *
+ * This program is free software; you can redistribute and/or modify it under
+ * the terms of the GNU General Public License version 2 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed WITHOUT ANY WARRANTY; even without the implied
+ * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program (see gnu-gpl v2.txt). If not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
+ * visit the Free Software Foundation web page, http://www.fsf.org.
+ */
 package org.n52.api.v1.io;
 
 import java.util.Map;
 
+import org.n52.io.v1.data.CategoryOutput;
 import org.n52.io.v1.data.FeatureOutput;
 import org.n52.io.v1.data.OfferingOutput;
 import org.n52.io.v1.data.PhenomenonOutput;
 import org.n52.io.v1.data.ProcedureOutput;
+import org.n52.io.v1.data.ServiceOutput;
 import org.n52.io.v1.data.StationOutput;
 import org.n52.io.v1.data.TimeseriesMetadataOutput;
 import org.n52.io.v1.data.TimeseriesOutput;
@@ -38,7 +63,8 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
 //        convertedTimeseries.setLastValue(lastValue);
         
         // TODO Auto-generated method stub
-        
+
+        convertedTimeseries.setParameters(getCondensedParameters(timeseries));
         Phenomenon phenomenon = getLookup().getPhenomenon(timeseries.getPhenomenonId());
         convertedTimeseries.setUom(phenomenon.getUnitOfMeasure());
         return convertedTimeseries;
@@ -48,7 +74,6 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
     @Override
     public TimeseriesMetadataOutput convertCondensed(SosTimeseries timeseries) {
         TimeseriesMetadataOutput convertedTimeseries = new TimeseriesMetadataOutput();
-        convertedTimeseries.setParameters(getCondensedParameters(timeseries));
         convertedTimeseries.setStation(getCondensedStation(timeseries));
         convertedTimeseries.setId(timeseries.getTimeseriesId());
         return convertedTimeseries;
@@ -60,7 +85,21 @@ public class TimeseriesConverter extends OutputConverter<SosTimeseries, Timeseri
         timeseriesOutput.setOffering(getCondensedOffering(timeseries));
         timeseriesOutput.setProcedure(getCondensedProcedure(timeseries));
         timeseriesOutput.setPhenomenon(getCondensedPhenomenon(timeseries));
+        timeseriesOutput.setCategory(getCondensedCategory(timeseries));
+        timeseriesOutput.setService(getCondensedService(timeseries));
         return timeseriesOutput;
+    }
+
+    private ServiceOutput getCondensedService(SosTimeseries timeseries) {
+        ServiceConverter converter = new ServiceConverter(getMetadata());
+        return converter.convertCondensed(getMetadata());
+    }
+
+    private CategoryOutput getCondensedCategory(SosTimeseries timeseries) {
+        
+        // TODO do we want a category to be an identifiable object or is a string just fine?
+        
+        return null;
     }
 
     private OfferingOutput getCondensedOffering(SosTimeseries timeseries) {
